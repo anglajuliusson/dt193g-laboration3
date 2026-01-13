@@ -24,6 +24,9 @@
         gap: 1rem;
         align-items: center;
     }
+    h1 {
+        color: rgb(56, 142, 107);
+    }
     .menu {
         width: 100%;
     }
