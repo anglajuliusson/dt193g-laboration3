@@ -15,6 +15,24 @@
     }
     }
 
+    // Ta bort konsert
+    const deleteConcert = async (id) => {
+    try {
+        const response = await fetch(`http://localhost:3000/conserts/${id}`, { // Radera specifik konsert utifrån id
+        method: 'DELETE'
+        })
+        
+        if (!response.ok) {
+        throw new Error('Kunde inte ta bort konsert') // Felmeddelande
+        }
+
+        // Uppdatera listan efter borttagning
+        concerts.value = concerts.value.filter(concert => concert.id !== id)
+    } catch (error) {
+        console.error(error)
+    }
+    }
+
     // Kör funktionen när komponenten mountas
     onMounted(fetchConcerts)
 </script>
@@ -36,7 +54,9 @@
                     <tr v-for="concert in concerts" :key="concert.id">
                         <td>{{ concert.artist }}</td>
                         <td>{{ concert.seen == 1 ? 'Ja' : 'Nej' }}</td>
-                        <td></td>
+                        <td class="td-button">
+                            <button @click="deleteConcert(concert.id)">Ta bort</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -100,6 +120,10 @@
         color: white;
         border: none;
         cursor: pointer;
+        border-radius: 5px;
+    }
+    .td-button {
+        text-align: center;
     }
     button:hover {
         background-color: rgb(200, 50, 50);
