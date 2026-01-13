@@ -4,6 +4,12 @@
     // Variabel för konserterna
     const concerts = ref([])
 
+    // Ny konsert från formuläret
+    const newConcert = ref({
+        artist: '',
+        seen: false
+    })
+
     // Funktion för att hämta data från backend
     const fetchConcerts = async () => {
     try {
@@ -21,13 +27,42 @@
         const response = await fetch(`http://localhost:3000/conserts/${id}`, { // Radera specifik konsert utifrån id
         method: 'DELETE'
         })
-        
+
         if (!response.ok) {
         throw new Error('Kunde inte ta bort konsert') // Felmeddelande
         }
 
         // Uppdatera listan efter borttagning
         concerts.value = concerts.value.filter(concert => concert.id !== id)
+    } catch (error) {
+        console.error(error)
+    }
+    }
+
+    // Lägg till ny konsert
+    const addConcert = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/conserts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            artist: newConcert.value.artist,
+            seen: newConcert.value.seen
+        })
+        })
+
+        if (!response.ok) {
+            throw new Error('Kunde inte lägga till konsert') // Felmeddelande
+        }
+
+        // Hämta om listan efter POST
+        await fetchConcerts()
+
+        // Töm formuläret
+        newConcert.value.artist = ''
+        newConcert.value.seen = false
     } catch (error) {
         console.error(error)
     }
@@ -63,12 +98,12 @@
         </div>
         <div class="new-consert">
             <p>Fyll i formuläret nedan för att lägga till ny konsert:</p>
-            <form>
+            <form @submit.prevent="addConcert">
                 <label>Artist eller grupp:</label>
-                <input type="text" placeholder="Artist eller grupp" />
+                <input type="text" placeholder="Artist eller grupp" v-model="newConcert.artist" required />
                 <div class="checkbox-row">
                     <label for="seen">Har sett:</label>
-                    <input type="checkbox" id="seen" />
+                    <input type="checkbox" id="seen" v-model="newConcert.seen"/>
                 </div>
                 <button type="submit">Lägg till</button>
             </form>
