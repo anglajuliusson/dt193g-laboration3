@@ -1,4 +1,23 @@
-<script setup></script>
+<script setup>
+    import { ref, onMounted } from 'vue'
+
+    // Variabel för konserterna
+    const concerts = ref([])
+
+    // Funktion för att hämta data från backend
+    const fetchConcerts = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/conserts') // URL för att hämta alla konserter
+        if (!response.ok) throw new Error('Kunde inte hämta konserter') // Felmeddelande
+        concerts.value = await response.json()
+    } catch (error) {
+        console.error(error)
+    }
+    }
+
+    // Kör funktionen när komponenten mountas
+    onMounted(fetchConcerts)
+</script>
   
 <template>
     <main>
@@ -14,7 +33,11 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                    <tr v-for="concert in concerts" :key="concert.id">
+                        <td>{{ concert.artist }}</td>
+                        <td>{{ concert.seen == 1 ? 'Ja' : 'Nej' }}</td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -64,6 +87,12 @@
         text-align: left;
         background-color: rgb(161, 221, 197);
         font-weight: bold;
+    }
+    td {
+        border: 1px solid rgb(161, 221, 197);
+        padding: 0.5rem;
+        text-align: left;
+        background-color: rgb(255, 255, 255);
     }
     button {
         padding: 0.3rem 0.6rem;
