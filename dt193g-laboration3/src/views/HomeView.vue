@@ -32,6 +32,7 @@
     }
     h2 {
         color: rgb(56, 142, 107);
+        text-align: center;
     }
     p {
         margin-top: 1em;
